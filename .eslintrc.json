@@ -50,7 +50,8 @@
     "implicit-arrow-linebreak": "off",
     "import/prefer-default-export": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "indent": "off"
   },
   "settings": {
     "react": {
