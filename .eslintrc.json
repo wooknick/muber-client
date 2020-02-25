@@ -9,6 +9,7 @@
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
     "airbnb-base"
     // "prettier"
   ],
@@ -45,9 +46,11 @@
       }
     ],
     "no-confusing-arrow": "off",
-    "react/no-unescaped-entities": false,
+    "react/no-unescaped-entities": 0,
     "implicit-arrow-linebreak": "off",
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   },
   "settings": {
     "react": {

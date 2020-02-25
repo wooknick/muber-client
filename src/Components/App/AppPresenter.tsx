@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
 
-interface IProps {
+interface Props {
   isLoggedIn: boolean;
 }
 
-const AppPresenter: React.SFC<IProps> = ({ isLoggedIn }) =>
+const AppPresenter: React.FunctionComponent<Props> = ({ isLoggedIn }) =>
   isLoggedIn ? <span>"you are in"</span> : <span>"you are out"</span>;
 
 AppPresenter.propTypes = {
