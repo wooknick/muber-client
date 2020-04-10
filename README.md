@@ -6,7 +6,7 @@ Client for Uber Clone Course.
 
 ### Logged Out:
 
-- [ ] Home
+- [ ] Login
 - [ ] Phone Login
 - [ ] Verify Phone Numbeer
 - [ ] Social Login

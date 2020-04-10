@@ -10,7 +10,7 @@ import AddPlace from "../../Routes/AddPlace";
 import EditAccount from "../../Routes/EditAccount";
 import FindAddress from "../../Routes/FindAddress";
 import Home from "../../Routes/Home";
-import OutHome from "../../Routes/OutHome";
+import Login from "../../Routes/Login";
 import PhoneLogin from "../../Routes/PhoneLogin";
 import Places from "../../Routes/Places";
 import Ride from "../../Routes/Ride";
@@ -30,7 +30,7 @@ const AppPresenter: React.FunctionComponent<Props> = ({ isLoggedIn }) => (
 
 const LoggedOutRoutes: React.FunctionComponent = () => (
   <Switch>
-    <Route path={"/"} exact={true} component={OutHome} />
+    <Route path={"/"} exact={true} component={Login} />
     <Route path={"/phone-login"} component={PhoneLogin} />
     <Route path={"/verify-phone/:number"} component={VerifyPhone} />
     <Route path={"/social-login"} component={SocialLogin} />
@@ -51,7 +51,7 @@ const LoggedInRoutes: React.FunctionComponent = () => (
 );
 
 AppPresenter.propTypes = {
-  isLoggedIn: PropTypes.bool.isRequired
+  isLoggedIn: PropTypes.bool.isRequired,
 };
 
 export default AppPresenter;
