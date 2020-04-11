@@ -24,9 +24,10 @@
     },
     "ecmaVersion": 2018
   },
-  "plugins": ["react", "@typescript-eslint"],
+  "plugins": ["react", "@typescript-eslint", "import"],
   "rules": {
     "quotes": "off",
+    "import/no-unresolved": "error",
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -51,7 +52,8 @@
     "import/prefer-default-export": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "indent": "off"
+    "indent": "off",
+    "operator-linebreak": 0
   },
   "settings": {
     "react": {
@@ -64,6 +66,9 @@
     "import/resolver": {
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      },
+      "typescript": {
+        "alwaysTryTypes": true
       }
     }
   },

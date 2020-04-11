@@ -1,50 +1,72 @@
-import React from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { useMutation } from "@apollo/react-hooks";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
 import PhoneLoginPresenter from "./PhoneLoginPresenter";
+import { PHONE_SIGN_IN } from "./PhoneQueries.queries";
+import {
+  startPhoneVerification,
+  startPhoneVerificationVariables,
+} from "../../@types/api";
 
-interface State {
-  countryCode: string;
-  phoneNumber: string;
-}
+const PhoneLoginContainer = () => {
+  const [countryCode, setCountryCode] = useState("+82");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneSignInMutation, { loading }] = useMutation<
+    startPhoneVerification,
+    startPhoneVerificationVariables
+  >(PHONE_SIGN_IN, {
+    variables: {
+      phoneNumber: `${countryCode}${phoneNumber}`,
+    },
+  });
 
-class PhoneLoginContainer extends React.Component<
-  RouteComponentProps<any>,
-  State
-> {
-  public state = {
-    countryCode: "+82",
-    phoneNumber: "",
-  };
-
-  public render() {
-    const { countryCode, phoneNumber } = this.state;
-    return (
-      <PhoneLoginPresenter
-        countryCode={countryCode}
-        phoneNumber={phoneNumber}
-        onInputChange={this.onInputChange}
-        onSubmit={this.onSubmit}
-      />
-    );
-  }
-
-  public onInputChange: React.ChangeEventHandler<
+  const onInputChange: React.ChangeEventHandler<
     HTMLInputElement | HTMLSelectElement
   > = (event) => {
     const {
       target: { name, value },
     } = event;
-    this.setState({
-      [name]: value,
-    } as any);
+    if (value.length < 12) {
+      if (name === "countryCode") {
+        setCountryCode(value);
+      } else if (name === "phoneNumber") {
+        setPhoneNumber(value);
+      }
+    }
   };
 
-  public onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
-    const { countryCode, phoneNumber } = this.state;
-    // eslint-disable-next-line
-    console.log(countryCode, phoneNumber);
+
+    const isValid =
+      /^0[0-9]{9,10}$/.test(`${phoneNumber}`) &&
+      /^\+[1-9]{2,4}$/.test(`${countryCode}`);
+
+    if (isValid) {
+      try {
+        const { data } = await phoneSignInMutation();
+        const StartPhoneVerification = data?.StartPhoneVerification;
+        if (StartPhoneVerification?.ok) {
+          return;
+        }
+        toast.error(StartPhoneVerification?.error);
+      } catch {
+        toast.error("Cannot connect to server");
+      }
+    } else {
+      toast.error("Please write a valid phone number");
+    }
   };
-}
+
+  return (
+    <PhoneLoginPresenter
+      countryCode={countryCode}
+      phoneNumber={phoneNumber}
+      onInputChange={onInputChange}
+      onSubmit={onSubmit}
+      loading={loading}
+    />
+  );
+};
 
 export default PhoneLoginContainer;
