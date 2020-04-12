@@ -30,17 +30,20 @@ interface Props {
   value: string;
   name?: string;
   onChange?: any;
+  className?: string;
 }
 
 const Input: React.FunctionComponent<Props> = ({
   placeholder = "",
   type = "text",
   required = true,
-  value,
+  value = "",
   name = "",
   onChange,
+  className,
 }) => (
   <Container
+    className={className}
     onChange={onChange}
     name={name}
     placeholder={placeholder}
@@ -57,6 +60,7 @@ Input.propTypes = {
   value: PropTypes.string.isRequired,
   name: PropTypes.string,
   onChange: PropTypes.any,
+  className: PropTypes.string,
 };
 
 export default Input;
