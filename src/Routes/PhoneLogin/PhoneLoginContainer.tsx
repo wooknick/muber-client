@@ -1,14 +1,18 @@
 import { useMutation } from "@apollo/react-hooks";
 import React, { useState } from "react";
+import { RouteComponentProps } from "react-router-dom";
 import { toast } from "react-toastify";
+import routes from "../../routes";
 import PhoneLoginPresenter from "./PhoneLoginPresenter";
-import { PHONE_SIGN_IN } from "./PhoneQueries.queries";
+import { PHONE_SIGN_IN } from "./PhoneLoginQueries";
 import {
   startPhoneVerification,
   startPhoneVerificationVariables,
 } from "../../@types/api";
 
-const PhoneLoginContainer = () => {
+const PhoneLoginContainer: React.FunctionComponent<RouteComponentProps> = ({
+  history,
+}: RouteComponentProps) => {
   const [countryCode, setCountryCode] = useState("+82");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneSignInMutation, { loading }] = useMutation<
@@ -47,9 +51,18 @@ const PhoneLoginContainer = () => {
         const { data } = await phoneSignInMutation();
         const StartPhoneVerification = data?.StartPhoneVerification;
         if (StartPhoneVerification?.ok) {
-          return;
+          toast.success("SMS Sent! Redirecting you..");
+          setTimeout(() => {
+            history.push({
+              pathname: routes.verifyPhone,
+              state: {
+                phoneNumber: `${countryCode}${phoneNumber}`,
+              },
+            });
+          }, 2000);
+        } else {
+          toast.error(StartPhoneVerification?.error);
         }
-        toast.error(StartPhoneVerification?.error);
       } catch {
         toast.error("Cannot connect to server");
       }

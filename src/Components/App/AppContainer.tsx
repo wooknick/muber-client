@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import { ThemeProvider } from "styled-components";
 import theme from "../../theme";
 import AppPresenter from "./AppPresenter";
-import { IS_LOGGED_IN } from "./AppQuries";
+import { IS_LOGGED_IN } from "./AppQuries.local";
 
 const AppContainer = ({ data }: { data?: any }) => (
   <>

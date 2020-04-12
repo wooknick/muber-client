@@ -6,6 +6,7 @@ import {
   Route,
   Switch
   } from "react-router-dom";
+import routes from "../../routes";
 import AddPlace from "../../Routes/AddPlace";
 import EditAccount from "../../Routes/EditAccount";
 import FindAddress from "../../Routes/FindAddress";
@@ -30,22 +31,22 @@ const AppPresenter: React.FunctionComponent<Props> = ({ isLoggedIn }) => (
 
 const LoggedOutRoutes: React.FunctionComponent = () => (
   <Switch>
-    <Route path={"/"} exact={true} component={Login} />
-    <Route path={"/phone-login"} component={PhoneLogin} />
-    <Route path={"/verify-phone/:number"} component={VerifyPhone} />
-    <Route path={"/social-login"} component={SocialLogin} />
+    <Route path={routes.home} exact={true} component={Login} />
+    <Route path={routes.phoneLogin} component={PhoneLogin} />
+    <Route path={routes.verifyPhone} component={VerifyPhone} />
+    <Route path={routes.socialLogin} component={SocialLogin} />
     <Redirect from={"*"} to={"/"} />
   </Switch>
 );
 const LoggedInRoutes: React.FunctionComponent = () => (
   <Switch>
-    <Route path={"/"} exact={true} component={Home} />
-    <Route path={"/ride"} component={Ride} />
-    <Route path={"/edit-account"} component={EditAccount} />
-    <Route path={"/settings"} component={Settings} />
-    <Route path={"/places"} component={Places} />
-    <Route path={"/add-place"} component={AddPlace} />
-    <Route path={"/find-address"} component={FindAddress} />
+    <Route path={routes.home} exact={true} component={Home} />
+    <Route path={routes.ride} component={Ride} />
+    <Route path={routes.editAccount} component={EditAccount} />
+    <Route path={routes.settings} component={Settings} />
+    <Route path={routes.places} component={Places} />
+    <Route path={routes.addPlace} component={AddPlace} />
+    <Route path={routes.findAddress} component={FindAddress} />
     <Redirect from={"*"} to={"/"} />
   </Switch>
 );

@@ -5,8 +5,8 @@ const client = new ApolloClient({
     defaults: {
       auth: {
         __typename: "Auth",
-        isLoggedIn: Boolean(localStorage.getItem("jwt"))
-      }
+        isLoggedIn: Boolean(localStorage.getItem("jwt")),
+      },
     },
     resolvers: {
       Mutation: {
@@ -16,9 +16,9 @@ const client = new ApolloClient({
             data: {
               auth: {
                 __typename: "Auth",
-                isLoggedIn: true
-              }
-            }
+                isLoggedIn: true,
+              },
+            },
           });
           return null;
         },
@@ -26,23 +26,25 @@ const client = new ApolloClient({
           localStorage.removeItem("jwt");
           cache.writeData({
             data: {
-              __typename: "Auth",
-              isLoggedIn: false
-            }
+              auth: {
+                __typename: "Auth",
+                isLoggedIn: false,
+              },
+            },
           });
           return null;
-        }
-      }
-    }
+        },
+      },
+    },
   },
   request: async (operation: Operation) => {
     operation.setContext({
       headers: {
-        "X-JWT": localStorage.getItem("jwt") || ""
-      }
+        "X-JWT": localStorage.getItem("jwt") || "",
+      },
     });
   },
-  uri: "http://localhost:4000/graphql"
+  uri: "http://localhost:4000/graphql",
 });
 
 export default client;
