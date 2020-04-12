@@ -52,7 +52,6 @@ const VerifyPhoneContainer: React.FunctionComponent<RouteComponentProps<
       } else {
         toast.error(CompletePhoneVerification?.error);
       }
-      // return false;
     } catch {
       toast.error("Cant Verify");
     }
