@@ -8,7 +8,7 @@ import { PHONE_SIGN_IN } from "./PhoneLoginQueries";
 import {
   startPhoneVerification,
   startPhoneVerificationVariables,
-} from "../../@types/api";
+} from "../../types/api";
 
 const PhoneLoginContainer: React.FunctionComponent<RouteComponentProps> = ({
   history,
