@@ -6,10 +6,10 @@ Client for Uber Clone Course.
 
 ### Logged Out:
 
-- [ ] Login
-- [ ] Phone Login
-- [ ] Verify Phone Numbeer
-- [ ] Social Login
+- [x] Login
+- [x] Phone Login
+- [x] Verify Phone Number
+- [x] Social Login
 
 ### Logged In:
 
