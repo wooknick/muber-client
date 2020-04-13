@@ -83,9 +83,14 @@ const ToggleDriving = styled.button<ToggleProps>`
 interface Props {
   data?: userProfile;
   loading: boolean;
+  toggleDrivingFn: () => void;
 }
 
-const MenuPresenter: React.FunctionComponent<Props> = ({ data, loading }) => {
+const MenuPresenter: React.FunctionComponent<Props> = ({
+  data,
+  loading,
+  toggleDrivingFn,
+}) => {
   const user = data?.GetMyProfile?.user;
 
   return (
@@ -105,7 +110,10 @@ const MenuPresenter: React.FunctionComponent<Props> = ({ data, loading }) => {
           </Header>
           <SLink to="/trips">Your Trips</SLink>
           <SLink to="/settings">Settings</SLink>
-          <ToggleDriving isDriving={!!user?.isDriving}>
+          <ToggleDriving
+            onClick={toggleDrivingFn}
+            isDriving={!!user?.isDriving}
+          >
             {user?.isDriving ? "Stop driving" : "Start driving"}
           </ToggleDriving>
         </>
@@ -115,8 +123,9 @@ const MenuPresenter: React.FunctionComponent<Props> = ({ data, loading }) => {
 };
 
 MenuPresenter.propTypes = {
-  data: Proptypes.any.isRequired,
+  data: Proptypes.any,
   loading: Proptypes.bool.isRequired,
+  toggleDrivingFn: Proptypes.func.isRequired,
 };
 
 export default MenuPresenter;

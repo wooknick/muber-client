@@ -1,5 +1,5 @@
-import { useQuery } from "@apollo/react-hooks";
 import React, { useState } from "react";
+import { useQuery } from "react-apollo";
 import { RouteComponentProps } from "react-router";
 import { USER_PROFILE } from "../../sharedQueries";
 import { userProfile } from "../../types/api";
