@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { useMutation, useQuery } from "react-apollo";
 import { RouteComponentProps } from "react-router-dom";
@@ -16,6 +17,7 @@ const EditAccountContainer: React.FunctionComponent<RouteComponentProps> = () =>
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [profilePhoto, setProfilePhoto] = useState<string>("");
+  const [uploading, setUploading] = useState<boolean>(false);
 
   const [updateProfileMutation, { loading }] = useMutation<
     updateProfile,
@@ -75,8 +77,32 @@ const EditAccountContainer: React.FunctionComponent<RouteComponentProps> = () =>
       setFirstName(value);
     } else if (name === "lastName") {
       setLastName(value);
-    } else if (name === "profilePhoto") {
-      setProfilePhoto(value);
+    }
+  };
+
+  const photoChangeHandle: React.ChangeEventHandler<HTMLInputElement> = async (
+    event
+  ) => {
+    const {
+      target: { files },
+    } = event;
+    if (files) {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append("file", files[0]);
+      formData.append("api_key", "757999259188238");
+      formData.append("upload_preset", "ivozgnxs");
+      formData.append("timestamp", String(Date.now() / 1000));
+      const {
+        data: { secure_url },
+      } = await axios.post(
+        "https://api.cloudinary.com/v1_1/minwookcloud/image/upload",
+        formData
+      );
+      if (secure_url) {
+        setUploading(false);
+        setProfilePhoto(secure_url);
+      }
     }
   };
 
@@ -91,8 +117,10 @@ const EditAccountContainer: React.FunctionComponent<RouteComponentProps> = () =>
       lastName={lastName}
       profilePhoto={profilePhoto}
       onInputChange={inputChangeHandle}
+      onPhotoChange={photoChangeHandle}
       loading={loading}
       onSubmit={submitHandle}
+      uploading={uploading}
     />
   );
 };

@@ -6,6 +6,7 @@ import Button from "../../Components/Button";
 import Form from "../../Components/Form";
 import Header from "../../Components/Header";
 import Input from "../../Components/Input";
+import PhotoInput from "../../Components/PhotoInput";
 import routes from "../../routes";
 
 const Container = styled.div``;
@@ -25,7 +26,9 @@ interface Props {
   profilePhoto: string;
   onSubmit: React.FormEventHandler;
   onInputChange: React.ChangeEventHandler;
+  onPhotoChange: React.ChangeEventHandler;
   loading: boolean;
+  uploading: boolean;
 }
 
 const EditAccountPresenter: React.FunctionComponent<Props> = ({
@@ -35,7 +38,9 @@ const EditAccountPresenter: React.FunctionComponent<Props> = ({
   onSubmit,
   profilePhoto,
   onInputChange,
+  onPhotoChange,
   loading,
+  uploading,
 }) => (
   <Container>
     <Helmet>
@@ -43,6 +48,11 @@ const EditAccountPresenter: React.FunctionComponent<Props> = ({
     </Helmet>
     <Header title={"Edit Account"} backTo={routes.home} />
     <ExtendedForm submitFn={onSubmit}>
+      <PhotoInput
+        uploading={uploading}
+        fileUrl={profilePhoto}
+        onChange={onPhotoChange}
+      />
       <ExtendedInput
         onChange={onInputChange}
         type={"text"}
@@ -76,7 +86,9 @@ EditAccountPresenter.propTypes = {
   profilePhoto: Proptypes.string.isRequired,
   onSubmit: Proptypes.func.isRequired,
   onInputChange: Proptypes.func.isRequired,
+  onPhotoChange: Proptypes.func.isRequired,
   loading: Proptypes.bool.isRequired,
+  uploading: Proptypes.bool.isRequired,
 };
 
 export default EditAccountPresenter;
