@@ -58,7 +58,9 @@ const PhotoInput: React.FunctionComponent<Props> = ({
           timeout={8000} // 3 secs
         />
       )}
-      {!uploading && <img src={fileUrl || defaultAvatar} />}
+      {!uploading && (
+        <img alt={"profilePhoto"} src={fileUrl || defaultAvatar} />
+      )}
     </Image>
   </Container>
 );
