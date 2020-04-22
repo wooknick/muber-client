@@ -7,6 +7,7 @@ import Button from "../../Components/Button";
 import Form from "../../Components/Form";
 import Header from "../../Components/Header";
 import Input from "../../Components/Input";
+import routes from "../../routes";
 
 const Container = styled.div`
   padding: 0 40px;
@@ -60,7 +61,7 @@ const AddPlacePresenter: React.FunctionComponent<Props> = ({
           value={address}
           name={"address"}
         />
-        <ExtendedLink to={"/find-address"}>Pick place from map</ExtendedLink>
+        <ExtendedLink to={routes.findAddress}>Pick place from map</ExtendedLink>
         {pickedAddress && (
           <Button
             onClick={null}
