@@ -15,9 +15,9 @@ Client for Uber Clone Course.
 
 - [ ] Home
 - [ ] Ride
-- [ ] Edit Account
-- [ ] Settings
-- [ ] Saved Places
-- [ ] Add Place
+- [x] Edit Account
+- [x] Settings
+- [x] Saved Places
+- [x] Add Place
 - [ ] find Address
 - [ ] Ride History

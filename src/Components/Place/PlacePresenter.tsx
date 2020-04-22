@@ -1,6 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { MutationFunction } from "react-apollo";
 import styled from "styled-components";
+import { editPlace, editPlaceVariables } from "../../types/api";
 
 const Place = styled.div`
   margin: 15px 0;
@@ -32,15 +34,17 @@ interface Props {
   fav: boolean;
   name: string;
   address: string;
+  onStarPress: MutationFunction<editPlace, editPlaceVariables>;
 }
 
 const PlacePresenter: React.FunctionComponent<Props> = ({
   fav,
   name,
   address,
+  onStarPress,
 }) => (
   <Place>
-    <Icon>{fav ? "✩" : "★"}</Icon>
+    <Icon onClick={onStarPress as any}>{fav ? "★" : "✩"}</Icon>
     <Container>
       <Name>{name}</Name>
       <Address>{address}</Address>
@@ -52,5 +56,6 @@ PlacePresenter.propTypes = {
   fav: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
   address: PropTypes.string.isRequired,
+  onStarPress: PropTypes.func.isRequired,
 };
 export default PlacePresenter;

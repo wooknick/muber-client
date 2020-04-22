@@ -85,6 +85,7 @@ const SettingsPresenter: React.FunctionComponent<Props> = ({
         places?.map((place) => (
           <Place
             key={place?.id}
+            id={place?.id || 0}
             fav={place?.isFav || false}
             name={place?.name || ""}
             address={place?.address || ""}
