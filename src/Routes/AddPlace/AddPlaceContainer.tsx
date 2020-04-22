@@ -13,8 +13,8 @@ const AddPlaceContainer: React.FunctionComponent<RouteComponentProps> = ({
 }: RouteComponentProps) => {
   const [address, setAddress] = useState("");
   const [name, setName] = useState("");
-  const [lat, setLat] = useState(1.25);
-  const [lng, setLng] = useState(2.3);
+  const [lat, setLat] = useState(0);
+  const [lng, setLng] = useState(0);
 
   const [addPlaceMutation, { loading }] = useMutation<
     addPlace,
@@ -63,6 +63,7 @@ const AddPlaceContainer: React.FunctionComponent<RouteComponentProps> = ({
       name={name}
       loading={loading}
       onSubmit={onSubmit}
+      pickedAddress={lat !== 0 && lng !== 0}
     />
   );
 };

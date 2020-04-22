@@ -28,6 +28,7 @@ interface Props {
   onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   loading: boolean;
   onSubmit: (event: React.FormEvent<HTMLButtonElement>) => void;
+  pickedAddress: boolean;
 }
 
 const AddPlacePresenter: React.FunctionComponent<Props> = ({
@@ -36,6 +37,7 @@ const AddPlacePresenter: React.FunctionComponent<Props> = ({
   name,
   loading,
   onSubmit,
+  pickedAddress,
 }) => (
   <React.Fragment>
     <Helmet>
@@ -59,7 +61,12 @@ const AddPlacePresenter: React.FunctionComponent<Props> = ({
           name={"address"}
         />
         <ExtendedLink to={"/find-address"}>Pick place from map</ExtendedLink>
-        <Button onClick={null} value={loading ? "Adding place" : "Add Place"} />
+        {pickedAddress && (
+          <Button
+            onClick={null}
+            value={loading ? "Adding place" : "Add Place"}
+          />
+        )}
       </Form>
     </Container>
   </React.Fragment>
@@ -71,6 +78,7 @@ AddPlacePresenter.propTypes = {
   name: PropTypes.string.isRequired,
   loading: PropTypes.bool.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  pickedAddress: PropTypes.bool.isRequired,
 };
 
 export default AddPlacePresenter;
