@@ -26,17 +26,20 @@ interface Props {
   value: string;
   onClick?: any;
   disabled?: boolean;
+  className?: string;
 }
 
 const Button: React.FunctionComponent<Props> = ({
   value,
   onClick,
   disabled = false,
+  className,
 }) => (
   <Container
     value={value}
     disabled={disabled}
     onClick={onClick}
+    className={className}
     type={"submit"}
   />
 );
@@ -45,5 +48,6 @@ Button.propTypes = {
   value: PropTypes.string.isRequired,
   onClick: PropTypes.any,
   disabled: PropTypes.bool,
+  className: PropTypes.string,
 };
 export default Button;

@@ -11,6 +11,7 @@ import { VERIFY_PHONE } from "./VerifyPhoneQueries";
 type LocationState = {
   phoneNumber: string;
 };
+
 const VerifyPhoneContainer: React.FunctionComponent<RouteComponentProps<
   {},
   StaticContext,

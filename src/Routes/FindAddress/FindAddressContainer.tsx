@@ -1,18 +1,34 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
+import { RouteComponentProps } from "react-router-dom";
 import { geoCode, reverseGeoCode } from "../../mapHelpers";
+import routes from "../../routes";
 import FindAddressPresenter from "./FindAddressPresenter";
 
-interface Props {
+interface Props extends RouteComponentProps {
   google: any;
 }
 
-const FindAddressContainer: React.FunctionComponent<Props> = ({ google }) => {
+const FindAddressContainer: React.FunctionComponent<Props> = ({
+  google,
+  history,
+}: Props) => {
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
   const [address, setAddress] = useState("");
   const mapRef = useRef();
   const map = useRef<google.maps.Map>();
+
+  const onPickPlace = () => {
+    history.push({
+      pathname: routes.addPlace,
+      state: {
+        address,
+        lat,
+        lng,
+      },
+    });
+  };
 
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -99,6 +115,7 @@ const FindAddressContainer: React.FunctionComponent<Props> = ({ google }) => {
       address={address}
       onInputChange={onInputChange}
       onInputBlur={onInputBlur}
+      onPickPlace={onPickPlace}
     />
   );
 };

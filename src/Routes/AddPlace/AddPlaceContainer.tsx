@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation } from "react-apollo";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps, StaticContext } from "react-router";
 import { toast } from "react-toastify";
 import routes from "../../routes";
 import { GET_PLACES } from "../../sharedQueries";
@@ -8,9 +8,20 @@ import { addPlace, addPlaceVariables } from "../../types/api";
 import AddPlacePresenter from "./AddPlacePresenter";
 import { ADD_PLACE } from "./AddPlaceQuery";
 
-const AddPlaceContainer: React.FunctionComponent<RouteComponentProps> = ({
+type LocationState = {
+  address: string;
+  lat: number;
+  lng: number;
+};
+
+const AddPlaceContainer: React.FunctionComponent<RouteComponentProps<
+  {},
+  StaticContext,
+  LocationState
+>> = ({
   history,
-}: RouteComponentProps) => {
+  location,
+}: RouteComponentProps<{}, StaticContext, LocationState>) => {
   const [address, setAddress] = useState("");
   const [name, setName] = useState("");
   const [lat, setLat] = useState(0);
@@ -29,6 +40,13 @@ const AddPlaceContainer: React.FunctionComponent<RouteComponentProps> = ({
     },
     refetchQueries: [{ query: GET_PLACES }],
   });
+
+  useEffect(() => {
+    const { state } = location;
+    setAddress(state?.address || "");
+    setLat(state?.lat || 0);
+    setLng(state?.lng || 0);
+  }, []);
 
   const onInputChange: React.ChangeEventHandler<HTMLInputElement> = async (
     event
