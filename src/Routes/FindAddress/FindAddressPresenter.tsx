@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Helmet } from "react-helmet";
 import styled from "styled-components";
+import AddressBar from "../../Components/AddressBar";
 
 const Map = styled.div`
   position: absolute;
@@ -27,13 +28,27 @@ const Center = styled.div`
 
 interface Props {
   mapRef: any;
+  address: string;
+  onInputBlur: () => void;
+  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const FindAddressPresenter: React.FunctionComponent<Props> = ({ mapRef }) => (
+const FindAddressPresenter: React.FunctionComponent<Props> = ({
+  mapRef,
+  address,
+  onInputChange,
+  onInputBlur,
+}) => (
   <div>
     <Helmet>
       <title>Find Address | Nuber</title>
     </Helmet>
+    <AddressBar
+      onBlur={onInputBlur}
+      onChange={onInputChange}
+      name={"address"}
+      value={address}
+    />
     <Center>
       <span role="img" aria-label="pin">
         📍
@@ -45,6 +60,9 @@ const FindAddressPresenter: React.FunctionComponent<Props> = ({ mapRef }) => (
 
 FindAddressPresenter.propTypes = {
   mapRef: PropTypes.any.isRequired,
+  address: PropTypes.string.isRequired,
+  onInputBlur: PropTypes.func.isRequired,
+  onInputChange: PropTypes.func.isRequired,
 };
 
 export default FindAddressPresenter;

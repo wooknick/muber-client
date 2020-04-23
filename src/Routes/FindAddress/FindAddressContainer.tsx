@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
+import { geoCode, reverseGeoCode } from "../../mapHelpers";
 import FindAddressPresenter from "./FindAddressPresenter";
 
 interface Props {
@@ -9,15 +10,51 @@ interface Props {
 const FindAddressContainer: React.FunctionComponent<Props> = ({ google }) => {
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
+  const [address, setAddress] = useState("");
   const mapRef = useRef();
-  let map: google.maps.Map;
+  const map = useRef<google.maps.Map>();
+
+  const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const {
+      target: { name, value },
+    } = event;
+    if (name === "address") {
+      setAddress(value);
+    }
+  };
+
+  const onInputBlur = async () => {
+    const result = await geoCode(address);
+    if (result !== false) {
+      const {
+        lat: newLat,
+        lng: newLng,
+        formatted_address: formatedAddress,
+      } = result;
+      setLat(newLat);
+      setLng(newLng);
+      setAddress(formatedAddress);
+      const latLng = new google.maps.LatLng(newLat, newLng);
+      if (map && map.current) {
+        map.current.panTo(latLng);
+      }
+    }
+  };
+
+  const reverseGeoCodeAddress = async (latitude: number, longitude: number) => {
+    const reversedAddress = await reverseGeoCode(latitude, longitude);
+    if (reversedAddress) {
+      setAddress(reversedAddress);
+    }
+  };
 
   const handleDragEnd = () => {
-    const newCenter = map.getCenter();
-    const newLat = newCenter.lat();
-    const newLng = newCenter.lng();
+    const newCenter = map?.current?.getCenter();
+    const newLat = newCenter?.lat() || 0;
+    const newLng = newCenter?.lng() || 0;
     setLat(newLat);
     setLng(newLng);
+    reverseGeoCodeAddress(newLat, newLng);
   };
 
   const loadMap = (latitude, longitude) => {
@@ -29,10 +66,12 @@ const FindAddressContainer: React.FunctionComponent<Props> = ({ google }) => {
         lng: longitude,
       },
       disableDefaultUI: true,
-      zoom: 11,
+      zoom: 15,
+      minZoom: 8,
     };
-    map = new maps.Map(mapNode, mapConfig);
-    map.addListener("dragend", handleDragEnd);
+    const newMap = new maps.Map(mapNode, mapConfig);
+    newMap.addListener("dragend", handleDragEnd);
+    map.current = newMap;
   };
 
   const handleGeoError = () => {
@@ -47,13 +86,21 @@ const FindAddressContainer: React.FunctionComponent<Props> = ({ google }) => {
     setLat(latitude);
     setLng(longitude);
     loadMap(latitude, longitude);
+    reverseGeoCodeAddress(latitude, longitude);
   };
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(handleGeoSucces, handleGeoError);
   }, []);
 
-  return <FindAddressPresenter mapRef={mapRef} />;
+  return (
+    <FindAddressPresenter
+      mapRef={mapRef}
+      address={address}
+      onInputChange={onInputChange}
+      onInputBlur={onInputBlur}
+    />
+  );
 };
 
 FindAddressContainer.propTypes = {
