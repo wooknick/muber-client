@@ -1,3 +1,4 @@
+import { GoogleAPI } from "google-maps-react";
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
@@ -6,7 +7,7 @@ import routes from "../../routes";
 import FindAddressPresenter from "./FindAddressPresenter";
 
 interface Props extends RouteComponentProps {
-  google: any;
+  google: GoogleAPI;
 }
 
 const FindAddressContainer: React.FunctionComponent<Props> = ({
@@ -76,18 +77,20 @@ const FindAddressContainer: React.FunctionComponent<Props> = ({
   const loadMap = (latitude, longitude) => {
     const { maps } = google;
     const mapNode = mapRef.current;
-    const mapConfig: google.maps.MapOptions = {
-      center: {
-        lat: latitude,
-        lng: longitude,
-      },
-      disableDefaultUI: true,
-      zoom: 15,
-      minZoom: 8,
-    };
-    const newMap = new maps.Map(mapNode, mapConfig);
-    newMap.addListener("dragend", handleDragEnd);
-    map.current = newMap;
+    if (mapNode) {
+      const mapConfig: google.maps.MapOptions = {
+        center: {
+          lat: latitude,
+          lng: longitude,
+        },
+        disableDefaultUI: true,
+        zoom: 15,
+        minZoom: 8,
+      };
+      const newMap = new maps.Map(mapNode, mapConfig);
+      newMap.addListener("dragend", handleDragEnd);
+      map.current = newMap;
+    }
   };
 
   const handleGeoError = () => {

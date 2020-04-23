@@ -65,7 +65,7 @@ const SettingsPresenter: React.FunctionComponent<Props> = ({
     </Helmet>
     <Header title={"Account Settings"} backTo={"/"} />
     <Container>
-      <GridLink to={"/edit-account"}>
+      <GridLink to={routes.editAccount}>
         {!userDataLoading &&
           user &&
           user.profilePhoto &&
