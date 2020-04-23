@@ -17,6 +17,7 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
   const mapRef = useRef();
   const map = useRef<google.maps.Map>();
   const userMarker = useRef<google.maps.Marker>();
+  const watchId = useRef(0);
 
   const { loading } = useQuery<userProfile>(USER_PROFILE);
 
@@ -66,20 +67,21 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
       newUserMarker.setMap(map.current);
       userMarker.current = newUserMarker;
 
-      // const watchOptions: PositionOptions = {
-      //   enableHighAccuracy: true,
-      // };
+      const watchOptions: PositionOptions = {
+        enableHighAccuracy: true,
+        timeout: 1000,
+      };
 
-      // navigator.geolocation.watchPosition(
-      //   handleGeoWatchSuccess,
-      //   handleGeoWatchError,
-      //   watchOptions
-      // );
+      const id = navigator.geolocation.watchPosition(
+        handleGeoWatchSuccess,
+        handleGeoWatchError,
+        watchOptions
+      );
+      watchId.current = id;
     }
   };
 
   const handleGeoSucces = (positon: Position) => {
-    console.log("handleSuccess");
     const {
       coords: { latitude, longitude },
     } = positon;
@@ -89,8 +91,10 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
   };
 
   useEffect(() => {
-    console.log("useEffect");
     navigator.geolocation.getCurrentPosition(handleGeoSucces, handleGeoError);
+    return () => {
+      navigator.geolocation.clearWatch(watchId.current);
+    };
   }, []);
 
   return (
