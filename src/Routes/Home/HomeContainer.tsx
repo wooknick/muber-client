@@ -25,77 +25,77 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
     setIsMenuOpen((v) => !v);
   };
 
-  const handleGeoError = () => {
-    console.log("No location");
-  };
-
-  const handleGeoWatchError = () => {
-    console.log("Error watching you");
-  };
-
-  const handleGeoWatchSuccess = (position: Position) => {
-    console.log(position);
-  };
-
-  const loadMap = (latitude, longitude) => {
-    const { maps } = google;
-    const mapNode = mapRef.current;
-    if (mapNode) {
-      const mapConfig: google.maps.MapOptions = {
-        center: {
-          lat: latitude,
-          lng: longitude,
-        },
-        disableDefaultUI: true,
-        minZoom: 8,
-        zoom: 15,
-      };
-
-      const newMap = new maps.Map(mapNode, mapConfig);
-      map.current = newMap;
-      const userMarkerOptions: google.maps.MarkerOptions = {
-        icon: {
-          path: maps.SymbolPath.CIRCLE,
-          scale: 7,
-        },
-        position: {
-          lat,
-          lng,
-        },
-      };
-      const newUserMarker = new maps.Marker(userMarkerOptions);
-      newUserMarker.setMap(map.current);
-      userMarker.current = newUserMarker;
-
-      const watchOptions: PositionOptions = {
-        enableHighAccuracy: true,
-        timeout: 1000,
-      };
-
-      const id = navigator.geolocation.watchPosition(
-        handleGeoWatchSuccess,
-        handleGeoWatchError,
-        watchOptions
-      );
-      watchId.current = id;
-    }
-  };
-
-  const handleGeoSuccess = (positon: Position) => {
-    const {
-      coords: { latitude, longitude },
-    } = positon;
-    setLat(latitude);
-    setLng(longitude);
-    loadMap(latitude, longitude);
-  };
-
   useEffect(() => {
+    const handleGeoError = () => {
+      console.log("No location");
+    };
+
+    const handleGeoWatchError = () => {
+      console.log("Error watching you");
+    };
+
+    const handleGeoWatchSuccess = (position: Position) => {
+      console.log(position);
+    };
+
+    const loadMap = (latitude, longitude) => {
+      const { maps } = google;
+      const mapNode = mapRef.current;
+      if (mapNode) {
+        const mapConfig: google.maps.MapOptions = {
+          center: {
+            lat: latitude,
+            lng: longitude,
+          },
+          disableDefaultUI: true,
+          minZoom: 8,
+          zoom: 15,
+        };
+
+        const newMap = new maps.Map(mapNode, mapConfig);
+        map.current = newMap;
+        const userMarkerOptions: google.maps.MarkerOptions = {
+          icon: {
+            path: maps.SymbolPath.CIRCLE,
+            scale: 7,
+          },
+          position: {
+            lat: latitude,
+            lng: longitude,
+          },
+        };
+        const newUserMarker = new maps.Marker(userMarkerOptions);
+        newUserMarker.setMap(map.current);
+        userMarker.current = newUserMarker;
+
+        const watchOptions: PositionOptions = {
+          enableHighAccuracy: true,
+          timeout: 1000,
+        };
+
+        const id = navigator.geolocation.watchPosition(
+          handleGeoWatchSuccess,
+          handleGeoWatchError,
+          watchOptions
+        );
+        watchId.current = id;
+      }
+    };
+
+    const handleGeoSuccess = (positon: Position) => {
+      const {
+        coords: { latitude, longitude },
+      } = positon;
+      setLat(latitude);
+      setLng(longitude);
+      loadMap(latitude, longitude);
+    };
+
     navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoError);
     return () => {
       navigator.geolocation.clearWatch(watchId.current);
     };
-  }, []);
+  }, [google]);
 
   return (
     <HomePresenter

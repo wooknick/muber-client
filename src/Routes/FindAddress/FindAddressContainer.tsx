@@ -65,52 +65,52 @@ const FindAddressContainer: React.FunctionComponent<Props> = ({
     }
   };
 
-  const handleDragEnd = () => {
-    const newCenter = map?.current?.getCenter();
-    const newLat = newCenter?.lat() || 0;
-    const newLng = newCenter?.lng() || 0;
-    setLat(newLat);
-    setLng(newLng);
-    reverseGeoCodeAddress(newLat, newLng);
-  };
-
-  const loadMap = (latitude, longitude) => {
-    const { maps } = google;
-    const mapNode = mapRef.current;
-    if (mapNode) {
-      const mapConfig: google.maps.MapOptions = {
-        center: {
-          lat: latitude,
-          lng: longitude,
-        },
-        disableDefaultUI: true,
-        zoom: 15,
-        minZoom: 8,
-      };
-      const newMap = new maps.Map(mapNode, mapConfig);
-      newMap.addListener("dragend", handleDragEnd);
-      map.current = newMap;
-    }
-  };
-
-  const handleGeoError = () => {
-    // eslint-disable-next-line
-    console.log("No location");
-  };
-
-  const handleGeoSuccess = (positon: Position) => {
-    const {
-      coords: { latitude, longitude },
-    } = positon;
-    setLat(latitude);
-    setLng(longitude);
-    loadMap(latitude, longitude);
-    reverseGeoCodeAddress(latitude, longitude);
-  };
-
   useEffect(() => {
+    const handleDragEnd = () => {
+      const newCenter = map?.current?.getCenter();
+      const newLat = newCenter?.lat() || 0;
+      const newLng = newCenter?.lng() || 0;
+      setLat(newLat);
+      setLng(newLng);
+      reverseGeoCodeAddress(newLat, newLng);
+    };
+
+    const loadMap = (latitude, longitude) => {
+      const { maps } = google;
+      const mapNode = mapRef.current;
+      if (mapNode) {
+        const mapConfig: google.maps.MapOptions = {
+          center: {
+            lat: latitude,
+            lng: longitude,
+          },
+          disableDefaultUI: true,
+          zoom: 15,
+          minZoom: 8,
+        };
+        const newMap = new maps.Map(mapNode, mapConfig);
+        newMap.addListener("dragend", handleDragEnd);
+        map.current = newMap;
+      }
+    };
+
+    const handleGeoError = () => {
+      // eslint-disable-next-line
+      console.log("No location");
+    };
+
+    const handleGeoSuccess = (positon: Position) => {
+      const {
+        coords: { latitude, longitude },
+      } = positon;
+      setLat(latitude);
+      setLng(longitude);
+      loadMap(latitude, longitude);
+      reverseGeoCodeAddress(latitude, longitude);
+    };
+
     navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoError);
-  }, []);
+  }, [google]);
 
   return (
     <FindAddressPresenter

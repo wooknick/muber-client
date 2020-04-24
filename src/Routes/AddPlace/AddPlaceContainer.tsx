@@ -46,7 +46,7 @@ const AddPlaceContainer: React.FunctionComponent<RouteComponentProps<
     setAddress(state?.address || "");
     setLat(state?.lat || 0);
     setLng(state?.lng || 0);
-  }, []);
+  }, [location]);
 
   const onInputChange: React.ChangeEventHandler<HTMLInputElement> = async (
     event
