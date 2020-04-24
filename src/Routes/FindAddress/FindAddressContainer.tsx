@@ -98,7 +98,7 @@ const FindAddressContainer: React.FunctionComponent<Props> = ({
     console.log("No location");
   };
 
-  const handleGeoSucces = (positon: Position) => {
+  const handleGeoSuccess = (positon: Position) => {
     const {
       coords: { latitude, longitude },
     } = positon;
@@ -109,7 +109,7 @@ const FindAddressContainer: React.FunctionComponent<Props> = ({
   };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(handleGeoSucces, handleGeoError);
+    navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoError);
   }, []);
 
   return (

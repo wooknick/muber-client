@@ -81,7 +81,7 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
     }
   };
 
-  const handleGeoSucces = (positon: Position) => {
+  const handleGeoSuccess = (positon: Position) => {
     const {
       coords: { latitude, longitude },
     } = positon;
@@ -91,7 +91,7 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
   };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(handleGeoSucces, handleGeoError);
+    navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoError);
     return () => {
       navigator.geolocation.clearWatch(watchId.current);
     };
