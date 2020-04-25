@@ -2,6 +2,8 @@ import { GoogleAPI } from "google-maps-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-apollo";
 import { RouteComponentProps } from "react-router";
+import { toast } from "react-toastify";
+import { geoCode } from "../../mapHelpers";
 import { USER_PROFILE } from "../../sharedQueries";
 import { userProfile } from "../../types/api";
 import HomePresenter from "./HomePresenter";
@@ -14,23 +16,139 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
+  const [toLat, setToLat] = useState(0);
+  const [toLng, setToLng] = useState(0);
+  const [toAddress, setToAddress] = useState("");
+  const [distance, setDistance] = useState("");
+  const [duration, setDuration] = useState("");
+  const [price, setPrice] = useState<number | undefined>(undefined);
   const mapRef = useRef();
   const map = useRef<google.maps.Map>();
   const userMarker = useRef<google.maps.Marker>();
+  const toMarker = useRef<google.maps.Marker>();
+  const directions = useRef<google.maps.DirectionsRenderer>();
   const watchId = useRef(0);
 
   const { loading } = useQuery<userProfile>(USER_PROFILE);
+
+  const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const {
+      target: { name, value },
+    } = event;
+    if (name === "toAddress") {
+      setToAddress(value);
+    }
+  };
+
+  const onAddressSubmit = async () => {
+    const { maps } = google;
+    const result = await geoCode(toAddress);
+    if (result !== false) {
+      const {
+        lat: latitude,
+        lng: longitude,
+        formatted_address: formatedAddress,
+      } = result;
+      if (toMarker.current) {
+        toMarker.current.setMap(null);
+      }
+      const toMarkerOptions: google.maps.MarkerOptions = {
+        position: {
+          lat: latitude,
+          lng: longitude,
+        },
+      };
+      const newToMarker = new maps.Marker(toMarkerOptions);
+      if (map.current) {
+        newToMarker.setMap(map.current);
+        toMarker.current = newToMarker;
+      }
+      const bounds = new maps.LatLngBounds();
+      bounds.extend({ lat, lng });
+      bounds.extend({ lat: latitude, lng: longitude });
+      if (map.current) {
+        map.current.fitBounds(bounds);
+      }
+      setToAddress(formatedAddress);
+      setToLat(latitude);
+      setToLng(longitude);
+    }
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen((v) => !v);
   };
 
+  // calculate price when distance updated
+  useEffect(() => {
+    if (distance !== "") {
+      const newPrice = parseFloat(
+        Number(parseFloat(distance.replace(",", "")) * 3).toFixed(2)
+      );
+      setPrice(newPrice);
+    }
+  }, [distance]);
+
+  // calculate destination and draw route when address input updated
+  useEffect(() => {
+    const handleRouteRequest = (
+      result: google.maps.DirectionsResult,
+      status: google.maps.DirectionsStatus
+    ) => {
+      if (status === google.maps.DirectionsStatus.OK) {
+        const { routes } = result;
+        const {
+          distance: { text: newDistance },
+          duration: { text: newDuration },
+        } = routes[0].legs[0];
+
+        setDistance(newDistance);
+        setDuration(newDuration);
+        if (directions.current && map.current) {
+          directions.current.setDirections(result);
+          directions.current.setMap(map.current);
+        }
+      } else {
+        toast.error("There is no route there");
+      }
+    };
+
+    const createPath = () => {
+      if (directions.current) {
+        directions.current.setMap(null);
+      }
+      const renderOptions: google.maps.DirectionsRendererOptions = {
+        suppressMarkers: true,
+        polylineOptions: {
+          strokeColor: "#000",
+        },
+      };
+      const directionsService: google.maps.DirectionsService = new google.maps.DirectionsService();
+      directions.current = new google.maps.DirectionsRenderer(renderOptions);
+      const from = new google.maps.LatLng(lat, lng);
+      const to = new google.maps.LatLng(toLat, toLng);
+      const directionsOptions: google.maps.DirectionsRequest = {
+        origin: from,
+        destination: to,
+        travelMode: google.maps.TravelMode.TRANSIT,
+      };
+      directionsService.route(directionsOptions, handleRouteRequest);
+    };
+
+    if (lat * lng * toLat * toLng !== 0) {
+      createPath();
+    }
+  }, [lat, lng, toLat, toLng, google]);
+
+  // add google map and marker when startup
   useEffect(() => {
     const handleGeoError = () => {
+      // eslint-disable-next-line
       console.log("No location");
     };
 
     const handleGeoWatchError = () => {
+      // eslint-disable-next-line
       console.log("Error watching you");
     };
 
@@ -46,7 +164,6 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
     };
 
     const loadMap = (latitude, longitude) => {
-      console.log(latitude, longitude);
       const { maps } = google;
       const mapNode = mapRef.current;
       if (mapNode) {
@@ -111,6 +228,10 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
       isMenuOpen={isMenuOpen}
       toggleMenu={toggleMenu}
       mapRef={mapRef}
+      toAddress={toAddress}
+      onInputChange={onInputChange}
+      onAddressSubmit={onAddressSubmit}
+      price={price}
     />
   );
 };

@@ -3,11 +3,13 @@ import React from "react";
 import { Helmet } from "react-helmet";
 import Sidebar from "react-sidebar";
 import styled from "styled-components";
+import AddressBar from "../../Components/AddressBar";
+import Button from "../../Components/Button";
 import Menu from "../../Components/Menu";
 
 const Container = styled.div``;
 
-const Button = styled.button`
+const MenuButton = styled.button`
   appearance: none;
   padding: 10px;
   position: absolute;
@@ -29,11 +31,30 @@ const Map = styled.div`
   width: 100%;
 `;
 
+const ExtendedButton = styled(Button)`
+  position: absolute;
+  bottom: 50px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: 10;
+  height: auto;
+  width: 80%;
+`;
+
+const RequestButton = styled(ExtendedButton)`
+  bottom: 125px;
+`;
+
 interface Props {
   isMenuOpen: boolean;
   toggleMenu: () => void;
   loading: boolean;
   mapRef: any;
+  toAddress: string;
+  onAddressSubmit: () => void;
+  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  price?: number;
 }
 
 const HomePresenter: React.FunctionComponent<Props> = ({
@@ -41,6 +62,10 @@ const HomePresenter: React.FunctionComponent<Props> = ({
   toggleMenu,
   loading,
   mapRef,
+  toAddress,
+  onInputChange,
+  onAddressSubmit,
+  price,
 }: Props) => (
   <Container>
     <Helmet>
@@ -58,7 +83,25 @@ const HomePresenter: React.FunctionComponent<Props> = ({
         },
       }}
     >
-      {!loading && <Button onClick={toggleMenu}>|||</Button>}
+      {!loading && <MenuButton onClick={toggleMenu}>|||</MenuButton>}
+      <AddressBar
+        name={"toAddress"}
+        onChange={onInputChange}
+        value={toAddress}
+        onBlur={() => ""}
+      />
+      {price && (
+        <RequestButton
+          onClick={onAddressSubmit}
+          disabled={toAddress === ""}
+          value={`Request Ride ($${price})`}
+        />
+      )}
+      <ExtendedButton
+        onClick={onAddressSubmit}
+        disabled={toAddress === ""}
+        value={price ? "Change address" : "Pick Address"}
+      />
       <Map ref={mapRef} />
     </Sidebar>
   </Container>
