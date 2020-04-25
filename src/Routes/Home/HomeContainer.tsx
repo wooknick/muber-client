@@ -35,10 +35,18 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
     };
 
     const handleGeoWatchSuccess = (position: Position) => {
-      console.log(position);
+      // console.log(position);
+      const {
+        coords: { latitude, longitude },
+      } = position;
+      if (userMarker.current && map.current) {
+        userMarker.current.setPosition({ lat: latitude, lng: longitude });
+        map.current.panTo({ lat: latitude, lng: longitude });
+      }
     };
 
     const loadMap = (latitude, longitude) => {
+      console.log(latitude, longitude);
       const { maps } = google;
       const mapNode = mapRef.current;
       if (mapNode) {
