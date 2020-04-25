@@ -1,12 +1,17 @@
 import { GoogleAPI } from "google-maps-react";
 import React, { useEffect, useRef, useState } from "react";
-import { useQuery } from "react-apollo";
+import { useMutation, useQuery } from "react-apollo";
 import { RouteComponentProps } from "react-router";
 import { toast } from "react-toastify";
 import { geoCode } from "../../mapHelpers";
 import { USER_PROFILE } from "../../sharedQueries";
-import { userProfile } from "../../types/api";
 import HomePresenter from "./HomePresenter";
+import { REPORT_LOCATION } from "./HomeQueries";
+import {
+  userProfile,
+  reportMovement,
+  reportMovementVariables,
+} from "../../types/api";
 
 interface Props extends RouteComponentProps {
   google: GoogleAPI;
@@ -30,6 +35,10 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
   const watchId = useRef(0);
 
   const { loading } = useQuery<userProfile>(USER_PROFILE);
+  const [reportLocationMutation] = useMutation<
+    reportMovement,
+    reportMovementVariables
+  >(REPORT_LOCATION);
 
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -160,6 +169,12 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
       if (userMarker.current && map.current) {
         userMarker.current.setPosition({ lat: latitude, lng: longitude });
         map.current.panTo({ lat: latitude, lng: longitude });
+        reportLocationMutation({
+          variables: {
+            lat: parseFloat(latitude.toFixed(10)),
+            lng: parseFloat(longitude.toFixed(10)),
+          },
+        });
       }
     };
 
@@ -220,7 +235,7 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
     return () => {
       navigator.geolocation.clearWatch(watchId.current);
     };
-  }, [google]);
+  }, [google, reportLocationMutation]);
 
   return (
     <HomePresenter
