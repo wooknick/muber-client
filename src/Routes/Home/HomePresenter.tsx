@@ -1,12 +1,21 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { MutationFunction } from "react-apollo";
 import { Helmet } from "react-helmet";
 import Sidebar from "react-sidebar";
 import styled from "styled-components";
 import AddressBar from "../../Components/AddressBar";
 import Button from "../../Components/Button";
 import Menu from "../../Components/Menu";
-import { userProfile } from "../../types/api";
+import RidePopUp from "../../Components/RidePopUp";
+import {
+  userProfile,
+  requestRide,
+  requestRideVariables,
+  getRides,
+  acceptRideVariables,
+  acceptRide,
+} from "../../types/api";
 
 const Container = styled.div``;
 
@@ -57,6 +66,9 @@ interface Props {
   onAddressSubmit: () => void;
   onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   price?: number;
+  requestRideFn?: MutationFunction<requestRide, requestRideVariables>;
+  acceptRideFn?: MutationFunction<acceptRide, acceptRideVariables>;
+  nearbyRide?: getRides;
 }
 
 const HomePresenter: React.FunctionComponent<Props> = ({
@@ -69,8 +81,12 @@ const HomePresenter: React.FunctionComponent<Props> = ({
   onAddressSubmit,
   price,
   data,
+  requestRideFn,
+  acceptRideFn,
+  nearbyRide,
 }: Props) => {
   const user = data?.GetMyProfile?.user;
+  const ride = nearbyRide?.GetNearbyRide.ride;
   return (
     <Container>
       <Helmet>
@@ -106,12 +122,23 @@ const HomePresenter: React.FunctionComponent<Props> = ({
         )}
         {price && (
           <RequestButton
-            onClick={onAddressSubmit}
+            onClick={requestRideFn}
             disabled={toAddress === ""}
             value={`Request Ride ($${price})`}
           />
         )}
-
+        {ride && (
+          <RidePopUp
+            id={ride.id}
+            pickUpAddress={ride.pickUpAddress}
+            dropOffAddress={ride.dropOffAddress}
+            price={ride.price}
+            distance={ride.distance}
+            passengerName={ride.passenger.fullName || ""}
+            passengerPhoto={ride.passenger.profilePhoto || ""}
+            acceptRideFn={acceptRideFn}
+          />
+        )}
         <Map ref={mapRef} />
       </Sidebar>
     </Container>

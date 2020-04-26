@@ -3,15 +3,26 @@ import React, { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "react-apollo";
 import { RouteComponentProps } from "react-router";
 import { toast } from "react-toastify";
-import { geoCode } from "../../mapHelpers";
+import { geoCode, reverseGeoCode } from "../../mapHelpers";
 import { USER_PROFILE } from "../../sharedQueries";
 import HomePresenter from "./HomePresenter";
-import { GET_NEARBY_DRIVERS, REPORT_LOCATION } from "./HomeQueries";
+import {
+  GET_NEARBY_DRIVERS,
+  REPORT_LOCATION,
+  REQUEST_RIDE,
+  GET_NEARBY_RIDE,
+  ACCEPT_RIDE,
+} from "./HomeQueries";
 import {
   userProfile,
   reportMovement,
   reportMovementVariables,
   getDrivers,
+  getRides,
+  requestRide,
+  requestRideVariables,
+  acceptRide,
+  acceptRideVariables,
 } from "../../types/api";
 
 interface Props extends RouteComponentProps {
@@ -20,11 +31,13 @@ interface Props extends RouteComponentProps {
 
 const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isDriving, setIsDriving] = useState<boolean>(false);
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
   const [toLat, setToLat] = useState(0);
   const [toLng, setToLng] = useState(0);
   const [toAddress, setToAddress] = useState("");
+  const [fromAddress, setFromAddress] = useState("");
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
   const [price, setPrice] = useState<number | undefined>(undefined);
@@ -36,17 +49,36 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
   const watchId = useRef(0);
   const drivers = useRef<google.maps.Marker[]>([]);
 
+  // get user profile query, handler start
+  const handleProfileQuery = (data: userProfile) => {
+    const { GetMyProfile } = data;
+    if (GetMyProfile.user) {
+      const {
+        user: { isDriving: isDrivingNow },
+      } = GetMyProfile;
+      setIsDriving(isDrivingNow);
+    }
+  };
   const { loading: userProfileLoading, data: userProfileData } = useQuery<
     userProfile
-  >(USER_PROFILE);
+  >(USER_PROFILE, {
+    onCompleted: handleProfileQuery,
+  });
+  // get user profile query, handler end
 
+  // get nearby Ride query start
+  const { data: nearbyRide } = useQuery<getRides>(GET_NEARBY_RIDE, {
+    skip: !isDriving,
+  });
+  // get nearby Ride Query end
+
+  // get nearby Drivers query, handler start
   const handleNearbyDrivers = (data) => {
     const {
       GetNearbyDrivers: { drivers: driversData, ok },
     } = data;
 
     if (ok && driversData) {
-      console.log(driversData);
       driversData.forEach((driver) => {
         if (map.current && drivers.current) {
           const existingDriver:
@@ -88,15 +120,54 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
   const { loading: getDriversLoading, data: getDriversData } = useQuery<
     getDrivers
   >(GET_NEARBY_DRIVERS, {
-    skip: userProfileData?.GetMyProfile.user?.isDriving,
+    skip: isDriving,
     onCompleted: handleNearbyDrivers,
-    pollInterval: 1000,
+    pollInterval: 5000,
     fetchPolicy: "cache-and-network",
   });
+  // get nearby Drivers query, handler end
+
+  // accet Ride mutation start
+  const [acceptRideMutation] = useMutation<acceptRide, acceptRideVariables>(
+    ACCEPT_RIDE
+  );
+  // accet Ride mutation end
+
+  // report Location mutation start
   const [reportLocationMutation] = useMutation<
     reportMovement,
     reportMovementVariables
   >(REPORT_LOCATION);
+  // report Location mutation end
+
+  // request Ride mutation, handler start
+  const handleRideRequest = (data: requestRide) => {
+    const { RequestRide } = data;
+    if (RequestRide.ok) {
+      toast.success("Drive requested, finding a driver");
+    } else {
+      toast.error(RequestRide.error);
+    }
+  };
+
+  const [requestRideMutation] = useMutation<requestRide, requestRideVariables>(
+    REQUEST_RIDE,
+    {
+      variables: {
+        pickUpAddress: fromAddress,
+        pickUpLat: lat,
+        pickUpLng: lng,
+        dropOffAddress: toAddress,
+        dropOffLat: toLat,
+        dropOffLng: toLng,
+        price: price || 0,
+        distance,
+        duration,
+      },
+      onCompleted: handleRideRequest,
+    }
+  );
+  // request Ride mutation, handler end
 
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -280,6 +351,12 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
       }
     };
 
+    const getFromAddress = async (latitude: number, longitude: number) => {
+      const address = await reverseGeoCode(latitude, longitude);
+      if (address) {
+        setFromAddress(address);
+      }
+    };
     const handleGeoSuccess = (positon: Position) => {
       const {
         coords: { latitude, longitude },
@@ -287,6 +364,7 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
       setLat(latitude);
       setLng(longitude);
       loadMap(latitude, longitude);
+      getFromAddress(latitude, longitude);
     };
 
     navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoError);
@@ -306,6 +384,9 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
       onInputChange={onInputChange}
       onAddressSubmit={onAddressSubmit}
       price={price}
+      requestRideFn={requestRideMutation}
+      nearbyRide={nearbyRide}
+      acceptRideFn={acceptRideMutation}
     />
   );
 };
