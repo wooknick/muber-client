@@ -1,3 +1,4 @@
+import { SubscribeToMoreOptions } from "apollo-boost";
 import { GoogleAPI } from "google-maps-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "react-apollo";
@@ -12,6 +13,7 @@ import {
   REQUEST_RIDE,
   GET_NEARBY_RIDE,
   ACCEPT_RIDE,
+  SUBSCRIBE_NEARBY_RIDES,
 } from "./HomeQueries";
 import {
   userProfile,
@@ -67,9 +69,31 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
   // get user profile query, handler end
 
   // get nearby Ride query start
-  const { data: nearbyRide } = useQuery<getRides>(GET_NEARBY_RIDE, {
-    skip: !isDriving,
-  });
+  const rideSubscriptionOptions: SubscribeToMoreOptions = {
+    document: SUBSCRIBE_NEARBY_RIDES,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (!subscriptionData.data) {
+        return prev;
+      }
+      const newObject = {
+        ...prev,
+        GetNearbyRide: {
+          ...prev.GetNearbyRide,
+          ride: subscriptionData.data.NearbyRidesSubscription,
+        },
+      };
+      return newObject;
+    },
+  };
+  const { subscribeToMore, data: nearbyRide } = useQuery<getRides>(
+    GET_NEARBY_RIDE,
+    {
+      skip: !isDriving,
+    }
+  );
+  if (isDriving) {
+    subscribeToMore(rideSubscriptionOptions);
+  }
   // get nearby Ride Query end
 
   // get nearby Drivers query, handler start
@@ -127,11 +151,11 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
   });
   // get nearby Drivers query, handler end
 
-  // accet Ride mutation start
+  // accept Ride mutation start
   const [acceptRideMutation] = useMutation<acceptRide, acceptRideVariables>(
     ACCEPT_RIDE
   );
-  // accet Ride mutation end
+  // accept Ride mutation end
 
   // report Location mutation start
   const [reportLocationMutation] = useMutation<

@@ -245,6 +245,35 @@ export interface acceptRideVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL subscription operation: nearbyRides
+// ====================================================
+
+export interface nearbyRides_NearbyRidesSubscription_passenger {
+  __typename: "User";
+  fullName: string | null;
+  profilePhoto: string | null;
+}
+
+export interface nearbyRides_NearbyRidesSubscription {
+  __typename: "Ride";
+  id: number;
+  pickUpAddress: string;
+  dropOffAddress: string;
+  price: number;
+  distance: string;
+  passenger: nearbyRides_NearbyRidesSubscription_passenger;
+}
+
+export interface nearbyRides {
+  NearbyRidesSubscription: nearbyRides_NearbyRidesSubscription | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: startPhoneVerification
 // ====================================================
 
