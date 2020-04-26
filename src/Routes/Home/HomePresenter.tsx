@@ -6,6 +6,7 @@ import styled from "styled-components";
 import AddressBar from "../../Components/AddressBar";
 import Button from "../../Components/Button";
 import Menu from "../../Components/Menu";
+import { userProfile } from "../../types/api";
 
 const Container = styled.div``;
 
@@ -50,6 +51,7 @@ interface Props {
   isMenuOpen: boolean;
   toggleMenu: () => void;
   loading: boolean;
+  data?: userProfile;
   mapRef: any;
   toAddress: string;
   onAddressSubmit: () => void;
@@ -66,46 +68,55 @@ const HomePresenter: React.FunctionComponent<Props> = ({
   onInputChange,
   onAddressSubmit,
   price,
-}: Props) => (
-  <Container>
-    <Helmet>
-      <title>Home | Number</title>
-    </Helmet>
-    <Sidebar
-      sidebar={<Menu />}
-      open={isMenuOpen}
-      onSetOpen={toggleMenu}
-      styles={{
-        sidebar: {
-          backgroundColor: "white",
-          width: "80%",
-          zIndex: "10",
-        },
-      }}
-    >
-      {!loading && <MenuButton onClick={toggleMenu}>|||</MenuButton>}
-      <AddressBar
-        name={"toAddress"}
-        onChange={onInputChange}
-        value={toAddress}
-        onBlur={() => ""}
-      />
-      {price && (
-        <RequestButton
-          onClick={onAddressSubmit}
-          disabled={toAddress === ""}
-          value={`Request Ride ($${price})`}
-        />
-      )}
-      <ExtendedButton
-        onClick={onAddressSubmit}
-        disabled={toAddress === ""}
-        value={price ? "Change address" : "Pick Address"}
-      />
-      <Map ref={mapRef} />
-    </Sidebar>
-  </Container>
-);
+  data,
+}: Props) => {
+  const user = data?.GetMyProfile?.user;
+  return (
+    <Container>
+      <Helmet>
+        <title>Home | Number</title>
+      </Helmet>
+      <Sidebar
+        sidebar={<Menu />}
+        open={isMenuOpen}
+        onSetOpen={toggleMenu}
+        styles={{
+          sidebar: {
+            backgroundColor: "white",
+            width: "80%",
+            zIndex: "10",
+          },
+        }}
+      >
+        {!loading && <MenuButton onClick={toggleMenu}>|||</MenuButton>}
+        {user && !user.isDriving && (
+          <>
+            <AddressBar
+              name={"toAddress"}
+              onChange={onInputChange}
+              value={toAddress}
+              onBlur={() => ""}
+            />
+            <ExtendedButton
+              onClick={onAddressSubmit}
+              disabled={toAddress === ""}
+              value={price ? "Change address" : "Pick Address"}
+            />
+          </>
+        )}
+        {price && (
+          <RequestButton
+            onClick={onAddressSubmit}
+            disabled={toAddress === ""}
+            value={`Request Ride ($${price})`}
+          />
+        )}
+
+        <Map ref={mapRef} />
+      </Sidebar>
+    </Container>
+  );
+};
 
 HomePresenter.propTypes = {
   isMenuOpen: PropTypes.bool.isRequired,

@@ -6,11 +6,12 @@ import { toast } from "react-toastify";
 import { geoCode } from "../../mapHelpers";
 import { USER_PROFILE } from "../../sharedQueries";
 import HomePresenter from "./HomePresenter";
-import { REPORT_LOCATION } from "./HomeQueries";
+import { GET_NEARBY_DRIVERS, REPORT_LOCATION } from "./HomeQueries";
 import {
   userProfile,
   reportMovement,
   reportMovementVariables,
+  getDrivers,
 } from "../../types/api";
 
 interface Props extends RouteComponentProps {
@@ -33,8 +34,65 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
   const toMarker = useRef<google.maps.Marker>();
   const directions = useRef<google.maps.DirectionsRenderer>();
   const watchId = useRef(0);
+  const drivers = useRef<google.maps.Marker[]>([]);
 
-  const { loading } = useQuery<userProfile>(USER_PROFILE);
+  const { loading: userProfileLoading, data: userProfileData } = useQuery<
+    userProfile
+  >(USER_PROFILE);
+
+  const handleNearbyDrivers = (data) => {
+    const {
+      GetNearbyDrivers: { drivers: driversData, ok },
+    } = data;
+
+    if (ok && driversData) {
+      console.log(driversData);
+      driversData.forEach((driver) => {
+        if (map.current && drivers.current) {
+          const existingDriver:
+            | google.maps.Marker
+            | undefined = drivers.current.find(
+            (driverMarker: google.maps.Marker) => {
+              const markerID = driverMarker.get("ID");
+              return markerID === driver.id;
+            }
+          );
+          if (existingDriver) {
+            existingDriver.setPosition({
+              lat: driver.lastLat,
+              lng: driver.lastLng,
+            });
+          } else {
+            const markerOptions: google.maps.MarkerOptions = {
+              position: {
+                lat: driver.lastLat,
+                lng: driver.lastLng,
+              },
+              icon: {
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                scale: 5,
+              },
+            };
+            const newMarker: google.maps.Marker = new google.maps.Marker(
+              markerOptions
+            );
+            newMarker.set("ID", driver.id);
+            newMarker.setMap(map.current);
+            drivers.current.push(newMarker);
+          }
+        }
+      });
+    }
+  };
+
+  const { loading: getDriversLoading, data: getDriversData } = useQuery<
+    getDrivers
+  >(GET_NEARBY_DRIVERS, {
+    skip: userProfileData?.GetMyProfile.user?.isDriving,
+    onCompleted: handleNearbyDrivers,
+    pollInterval: 1000,
+    fetchPolicy: "cache-and-network",
+  });
   const [reportLocationMutation] = useMutation<
     reportMovement,
     reportMovementVariables
@@ -239,7 +297,8 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
 
   return (
     <HomePresenter
-      loading={loading}
+      loading={userProfileLoading}
+      data={userProfileData}
       isMenuOpen={isMenuOpen}
       toggleMenu={toggleMenu}
       mapRef={mapRef}
