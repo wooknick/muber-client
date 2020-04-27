@@ -49,7 +49,7 @@ const wsLink = new WebSocketLink({
   },
   uri: isDev
     ? "ws://localhost:4000/subscriptions"
-    : "ws://muber-backend.herokuapp.com/subscriptions",
+    : "wss://muber-backend.herokuapp.com/subscriptions",
 });
 
 const combinedLinks = split(
