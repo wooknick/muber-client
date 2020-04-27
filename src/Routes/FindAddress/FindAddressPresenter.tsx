@@ -55,7 +55,7 @@ const FindAddressPresenter: React.FunctionComponent<Props> = ({
 }) => (
   <div>
     <Helmet>
-      <title>Find Address | Nuber</title>
+      <title>Find Address | Muber</title>
     </Helmet>
     <AddressBar
       onBlur={onInputBlur}

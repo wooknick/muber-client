@@ -42,7 +42,7 @@ const AddPlacePresenter: React.FunctionComponent<Props> = ({
 }) => (
   <React.Fragment>
     <Helmet>
-      <title>Add Place | Nuber</title>
+      <title>Add Place | Muber</title>
     </Helmet>
     <Header title={"Add Place"} backTo={"/"} />
     <Container>

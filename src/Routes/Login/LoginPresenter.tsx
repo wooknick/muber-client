@@ -69,17 +69,17 @@ const LoginPresenter: React.FunctionComponent<RouteComponentProps<
 >> = () => (
   <Container>
     <Helmet>
-      <title>Login | Nuber</title>
+      <title>Login | Muber</title>
     </Helmet>
     <Header>
       <Logo>
-        <Title>Nuber</Title>
+        <Title>Muber</Title>
       </Logo>
     </Header>
     <Footer>
       <Link to={"/phone-login"}>
         <PhoneLogin>
-          <Subtitle>Get moving with Nuber</Subtitle>
+          <Subtitle>Get moving with Muber</Subtitle>
           <FakeInput>
             <span role="img" aria-label="ko">
               🇰🇷

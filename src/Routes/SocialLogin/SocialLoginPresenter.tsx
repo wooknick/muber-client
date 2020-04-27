@@ -40,7 +40,7 @@ const SocialLoginPresenter: React.FunctionComponent<Props> = ({
 }) => (
   <Container>
     <Helmet>
-      <title>Social Login | Nuber</title>
+      <title>Social Login | Muber</title>
     </Helmet>
     <Title>Choose an account</Title>
     <BackArrowExtended backTo={"/"} />

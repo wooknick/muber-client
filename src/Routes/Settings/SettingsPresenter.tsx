@@ -61,7 +61,7 @@ const SettingsPresenter: React.FunctionComponent<Props> = ({
 }) => (
   <>
     <Helmet>
-      <title>Settings | Nuber</title>
+      <title>Settings | Muber</title>
     </Helmet>
     <Header title={"Account Settings"} backTo={"/"} />
     <Container>
