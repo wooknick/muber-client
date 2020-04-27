@@ -8,6 +8,7 @@ import {
   } from "react-router-dom";
 import routes from "../../routes";
 import AddPlace from "../../Routes/AddPlace";
+import Chat from "../../Routes/Chat";
 import EditAccount from "../../Routes/EditAccount";
 import FindAddress from "../../Routes/FindAddress";
 import Home from "../../Routes/Home";
@@ -42,6 +43,7 @@ const LoggedInRoutes: React.FunctionComponent = () => (
   <Switch>
     <Route path={routes.home} exact={true} component={Home} />
     <Route path={routes.ride} component={Ride} />
+    <Route path={routes.chat} component={Chat} />
     <Route path={routes.editAccount} component={EditAccount} />
     <Route path={routes.settings} component={Settings} />
     <Route path={routes.places} component={Places} />

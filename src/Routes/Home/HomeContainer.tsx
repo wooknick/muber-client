@@ -31,7 +31,10 @@ interface Props extends RouteComponentProps {
   google: GoogleAPI;
 }
 
-const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
+const HomeContainer: React.FunctionComponent<Props> = ({
+  google,
+  history,
+}: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isDriving, setIsDriving] = useState<boolean>(false);
   const [lat, setLat] = useState(0);
@@ -152,8 +155,18 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
   // get nearby Drivers query, handler end
 
   // accept Ride mutation start
+  const handleRideAcceptance = (data: acceptRide) => {
+    const { UpdateRideStatus } = data;
+    if (UpdateRideStatus.ok && UpdateRideStatus.rideId) {
+      history.push(`/ride/${UpdateRideStatus.rideId}`);
+    }
+  };
+
   const [acceptRideMutation] = useMutation<acceptRide, acceptRideVariables>(
-    ACCEPT_RIDE
+    ACCEPT_RIDE,
+    {
+      onCompleted: handleRideAcceptance,
+    }
   );
   // accept Ride mutation end
 
@@ -169,6 +182,9 @@ const HomeContainer: React.FunctionComponent<Props> = ({ google }: Props) => {
     const { RequestRide } = data;
     if (RequestRide.ok) {
       toast.success("Drive requested, finding a driver");
+      if (RequestRide.ride) {
+        history.push(`/ride/${RequestRide.ride.id}`);
+      }
     } else {
       toast.error(RequestRide.error);
     }
