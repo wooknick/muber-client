@@ -1,5 +1,5 @@
 import { SubscribeToMoreOptions } from "apollo-boost";
-import React from "react";
+import React, { useEffect } from "react";
 import { useMutation, useQuery } from "react-apollo";
 import { RouteComponentProps } from "react-router-dom";
 import { USER_PROFILE } from "../../sharedQueries";
@@ -35,24 +35,26 @@ const RideContainer: React.FunctionComponent<Props> = ({
       rideId: Number(match.params.rideId),
     },
   });
-  const subscribeOptions: SubscribeToMoreOptions = {
-    document: RIDE_SUBSCRIPTION,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (!subscriptionData.data) {
-        return prev;
-      }
-      const {
-        data: {
-          RideStatusSubscription: { status },
-        },
-      } = subscriptionData;
-      if (status === "FINISHED") {
-        window.location.href = "/";
-      }
-    },
-  };
 
-  subscribeToMore(subscribeOptions);
+  useEffect(() => {
+    const subscribeOptions: SubscribeToMoreOptions = {
+      document: RIDE_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) {
+          return prev;
+        }
+        const {
+          data: {
+            RideStatusSubscription: { status },
+          },
+        } = subscriptionData;
+        if (status === "FINISHED") {
+          window.location.href = "/";
+        }
+      },
+    };
+    subscribeToMore(subscribeOptions);
+  }, [subscribeToMore]);
 
   const { data: userData } = useQuery<userProfile>(USER_PROFILE);
 

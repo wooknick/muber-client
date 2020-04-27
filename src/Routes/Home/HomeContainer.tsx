@@ -72,31 +72,33 @@ const HomeContainer: React.FunctionComponent<Props> = ({
   // get user profile query, handler end
 
   // get nearby Ride query start
-  const rideSubscriptionOptions: SubscribeToMoreOptions = {
-    document: SUBSCRIBE_NEARBY_RIDES,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (!subscriptionData.data) {
-        return prev;
-      }
-      const newObject = {
-        ...prev,
-        GetNearbyRide: {
-          ...prev.GetNearbyRide,
-          ride: subscriptionData.data.NearbyRidesSubscription,
-        },
-      };
-      return newObject;
-    },
-  };
   const { subscribeToMore, data: nearbyRide } = useQuery<getRides>(
     GET_NEARBY_RIDE,
     {
       skip: !isDriving,
     }
   );
-  if (isDriving) {
-    subscribeToMore(rideSubscriptionOptions);
-  }
+  useEffect(() => {
+    const rideSubscriptionOptions: SubscribeToMoreOptions = {
+      document: SUBSCRIBE_NEARBY_RIDES,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) {
+          return prev;
+        }
+        const newObject = {
+          ...prev,
+          GetNearbyRide: {
+            ...prev.GetNearbyRide,
+            ride: subscriptionData.data.NearbyRidesSubscription,
+          },
+        };
+        return newObject;
+      },
+    };
+    if (isDriving) {
+      subscribeToMore(rideSubscriptionOptions);
+    }
+  }, [isDriving, subscribeToMore]);
   // get nearby Ride Query end
 
   // get nearby Drivers query, handler start

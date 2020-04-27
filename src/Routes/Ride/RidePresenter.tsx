@@ -69,7 +69,6 @@ const RidePresenter: React.FunctionComponent<Props> = ({
   userData,
   updateRideFn,
 }: Props) => {
-  console.log(data);
   const ride = data?.GetRide.ride;
   const user = userData?.GetMyProfile.user;
 
