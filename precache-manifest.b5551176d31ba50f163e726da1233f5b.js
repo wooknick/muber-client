@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "a7e44d2de554313bcfac4e89656cd854",
+    "revision": "36be08e3a18e3d6cf3d3c5e7fdbb97e1",
     "url": "/muber-client/index.html"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/muber-client/static/js/2.52860fa5.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "983845a572fd4f9f341e",
-    "url": "/muber-client/static/js/main.6c5d35d5.chunk.js"
+    "revision": "2d02755f16017260aeae",
+    "url": "/muber-client/static/js/main.fdf10129.chunk.js"
   },
   {
     "revision": "0a78d96f19a875adee38",
