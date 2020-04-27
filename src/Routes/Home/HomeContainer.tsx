@@ -146,9 +146,7 @@ const HomeContainer: React.FunctionComponent<Props> = ({
     }
   };
 
-  const { loading: getDriversLoading, data: getDriversData } = useQuery<
-    getDrivers
-  >(GET_NEARBY_DRIVERS, {
+  useQuery<getDrivers>(GET_NEARBY_DRIVERS, {
     skip: isDriving,
     onCompleted: handleNearbyDrivers,
     pollInterval: 5000,
