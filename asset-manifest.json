@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.js": "/muber-client/static/js/main.8cd8094f.chunk.js",
-    "main.js.map": "/muber-client/static/js/main.8cd8094f.chunk.js.map",
+    "main.js": "/muber-client/static/js/main.6c5d35d5.chunk.js",
+    "main.js.map": "/muber-client/static/js/main.6c5d35d5.chunk.js.map",
     "runtime-main.js": "/muber-client/static/js/runtime-main.840ac2ba.js",
     "runtime-main.js.map": "/muber-client/static/js/runtime-main.840ac2ba.js.map",
     "static/css/2.00649687.chunk.css": "/muber-client/static/css/2.00649687.chunk.css",
     "static/js/2.52860fa5.chunk.js": "/muber-client/static/js/2.52860fa5.chunk.js",
     "static/js/2.52860fa5.chunk.js.map": "/muber-client/static/js/2.52860fa5.chunk.js.map",
     "index.html": "/muber-client/index.html",
-    "precache-manifest.630ab6adb3cd774c3dcc156e0e3f82f3.js": "/muber-client/precache-manifest.630ab6adb3cd774c3dcc156e0e3f82f3.js",
+    "precache-manifest.285baf58a97b36a4977ace189bf6bb8c.js": "/muber-client/precache-manifest.285baf58a97b36a4977ace189bf6bb8c.js",
     "service-worker.js": "/muber-client/service-worker.js",
     "static/css/2.00649687.chunk.css.map": "/muber-client/static/css/2.00649687.chunk.css.map",
     "static/js/2.52860fa5.chunk.js.LICENSE.txt": "/muber-client/static/js/2.52860fa5.chunk.js.LICENSE.txt",
@@ -18,6 +18,6 @@
     "static/js/runtime-main.840ac2ba.js",
     "static/css/2.00649687.chunk.css",
     "static/js/2.52860fa5.chunk.js",
-    "static/js/main.8cd8094f.chunk.js"
+    "static/js/main.6c5d35d5.chunk.js"
   ]
 }

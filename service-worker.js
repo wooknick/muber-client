@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/muber-client/precache-manifest.630ab6adb3cd774c3dcc156e0e3f82f3.js"
+  "/muber-client/precache-manifest.285baf58a97b36a4977ace189bf6bb8c.js"
 );
 
 self.addEventListener('message', (event) => {
