@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useMutation, useQuery } from "react-apollo";
 import { RouteComponentProps } from "react-router-dom";
 import { toast } from "react-toastify";
-import { CLOUDINARY_KEY, CLOUDINARY_PRESET } from "../../keys";
 import { USER_PROFILE } from "../../sharedQueries";
 import EditAccountPresenter from "./EditAccountPresenter";
 import { UPDATE_PROFILE } from "./EditAccountQueries";
@@ -91,8 +90,11 @@ const EditAccountContainer: React.FunctionComponent<RouteComponentProps> = () =>
       setUploading(true);
       const formData = new FormData();
       formData.append("file", files[0]);
-      formData.append("api_key", CLOUDINARY_KEY);
-      formData.append("upload_preset", CLOUDINARY_PRESET);
+      formData.append("api_key", process.env.REACT_APP_CLOUDINARY_KEY || "");
+      formData.append(
+        "upload_preset",
+        process.env.REACT_APP_CLOUDINARY_PRESET || ""
+      );
       formData.append("timestamp", String(Date.now() / 1000));
       const {
         data: { secure_url },
