@@ -84,6 +84,5 @@
     "eslint-plugin-react": "^7.18.3",
     "eslint-plugin-react-hooks": "^1.7.0",
     "gh-pages": "^2.2.0"
-  },
-  "homepage": "https://wooknick.github.io/muber-client/"
+  }
 }
